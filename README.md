@@ -14,6 +14,23 @@
 $ npm install
 ```
 
+## Prerequisite
+
+```bash
+# install postgresql
+$ sudo apt-get install postgresql postgresql-contrib
+$ sudo service postgresql start
+$ sudo -i -u postgres
+$ createuser --interactive (<username>, y) + (root, y)
+$ createdb nest
+$ psql -d nest
+nest=# ALTER USER root PASSWORD 'password';
+
+# install sqlite3 (for test)
+$ sudo apt-get install sqlite3
+$ sqlite3 --version
+```
+
 ## Running the app
 
 ```bash
