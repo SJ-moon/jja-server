@@ -61,6 +61,9 @@ $ npm run test:cov
 ## Lint
 use settings.json in VSCode
 
+
+TEST
+
 open settings
 ```bash
 # cmd + shift + p (or ctrl + shift + p)
