@@ -25,6 +25,7 @@ $ createuser --interactive (<username>, y) + (root, y)
 $ createdb nest
 $ psql -d nest
 nest=# ALTER USER root PASSWORD 'password';
+$ sudo sed -i 's/peer/md5/g' /etc/postgresql/{version}/main/pg_hba.conf
 
 # install sqlite3 (for test)
 $ sudo apt-get install sqlite3
