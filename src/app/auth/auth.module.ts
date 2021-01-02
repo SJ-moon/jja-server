@@ -7,7 +7,6 @@ import { AuthService } from '@app/auth/auth.service';
 import { User } from '@app/user/user.entity';
 import { LocalStrategy } from '@app/auth/local.strategy';
 import { UserModule } from '@app/user/user.module';
-import { UserService } from '@app/user/user.service';
 import { jwtConstants } from '@constant/jwt.constant';
 
 @Module({
@@ -21,6 +20,6 @@ import { jwtConstants } from '@constant/jwt.constant';
     TypeOrmModule.forFeature([User]),
   ],
   controllers: [AuthController],
-  providers: [AuthService, UserService, LocalStrategy],
+  providers: [AuthService, LocalStrategy],
 })
 export class AuthModule {}
