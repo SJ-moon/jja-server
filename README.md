@@ -28,7 +28,7 @@ nest=# ALTER USER root PASSWORD 'password';
 $ sudo sed -i 's/peer/md5/g' /etc/postgresql/{version}/main/pg_hba.conf
 
 # install ts-node
-$ npm -g install ts-node
+$ npm -g install ts-node (may need sudo)
 
 # install sqlite3 (for test)
 $ sudo apt-get install sqlite3
