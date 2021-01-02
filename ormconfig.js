@@ -1,9 +1,21 @@
-module.exports = {
-  type: 'postgres',
-  host: 'localhost',
-  port: 5432,
-  username: 'root',
-  password: 'password',
-  database: 'nest',
-  entities: ['dist/app/**/*.entity.js'],
-};
+let databaseConfig = require(__dirname +
+  '/src/config/database/database.config.js');
+const node_env = process.env.NODE_ENV;
+
+if (node_env === 'development') {
+  databaseConfig = {
+    ...databaseConfig,
+    migrations: ['src/migration/*.ts'],
+    cli: {
+      migrationsDir: 'src/migration',
+    },
+    entities: ['src/app/**/*.entity.ts'],
+  };
+} else if (node_env === 'production') {
+  databaseConfig = {
+    ...databaseConfig,
+    entities: ['dist/app/**/*.entity.js'],
+  };
+}
+
+module.exports = databaseConfig;
