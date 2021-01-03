@@ -1,22 +1,28 @@
 import * as bcrypt from 'bcrypt';
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '@app/user/user.service';
 import { User } from '@app/user/user.entity';
-import { loginResponseType } from '@type/auth/auth.resp';
+import { loginResponse } from '@type/auth/auth.resp';
+import { createAuthDto } from '@type/auth/auth.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Auth } from '@app/auth/auth.entity';
+import { QueryFailedError, Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private userService: UserService,
-    private jwtService: JwtService,
+    @Inject(forwardRef(() => UserService))
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
+    @InjectRepository(Auth)
+    private authRepository: Repository<Auth>,
   ) {}
 
   async bcryptCompareUser(inputPassword: string, user: User): Promise<boolean> {
-    const salt = user.auth.salt;
     const savedPassword = user.auth.password;
-    const hash = await bcrypt.hash(inputPassword, salt);
-    return await bcrypt.compare(savedPassword, hash);
+    const result = await bcrypt.compare(inputPassword, savedPassword);
+    return result;
   }
 
   async validateUser(email: string, password: string): Promise<any> {
@@ -27,7 +33,7 @@ export class AuthService {
     return null;
   }
 
-  async login(user: User): Promise<loginResponseType> {
+  async login(user: User): Promise<loginResponse> {
     const payload = {
       email: user.email,
       sub: user.id,
@@ -35,5 +41,23 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(payload),
     };
+  }
+
+  async create(createAuthDto: createAuthDto): Promise<Auth> {
+    const round = 10;
+    const salt = await bcrypt.genSalt(round);
+    const password = await bcrypt.hash(createAuthDto.password, salt);
+    const authDto = {
+      user: createAuthDto.user,
+      password,
+      salt,
+    };
+    const auth = await this.authRepository.create(authDto);
+    try {
+      return await this.authRepository.save(auth);
+    } catch (e) {
+      if (e instanceof QueryFailedError) return createAuthDto.user.auth;
+      else throw e;
+    }
   }
 }

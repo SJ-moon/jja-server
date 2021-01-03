@@ -9,6 +9,9 @@ export class User {
   @Column({ unique: true })
   email: string;
 
+  @Column()
+  name: string;
+
   @OneToOne(() => Auth, (auth) => auth.user)
   auth: Auth;
 }

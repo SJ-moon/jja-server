@@ -5,8 +5,7 @@ import { PassportModule } from '@nestjs/passport';
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { AuthController } from '@app/auth/auth.controller';
 import { AuthService } from '@app/auth/auth.service';
-import { LocalStrategy } from '@app/auth/local.strategy';
-import { UserService } from '@app/user/user.service';
+import { LocalStrategy } from '@app/auth/strategies/local.strategy';
 import { jwtConstants } from '@constant/jwt.constant';
 import { UserModule } from '@app/user/user.module';
 import { User } from '@app/user/user.entity';
@@ -28,7 +27,7 @@ describe('AuthController', () => {
         ...TestConnectionModule([User, Auth]),
       ],
       controllers: [AuthController],
-      providers: [AuthService, UserService, LocalStrategy],
+      providers: [AuthService, LocalStrategy],
     }).compile();
 
     app = moduleFixture.createNestApplication();
