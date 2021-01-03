@@ -14,9 +14,11 @@
     "paths": {
       "@app/*": ["./src/app/*"],
       "@config/*": ["./src/config/*"],
-      "@middleware/*": ["./src/middleware/*"]
+      "@constant/*": ["./src/constant/*"],
+      "@middleware/*": ["./src/middleware/*"],
+      "@type/*": ["./src/type/*"]
     }
   },
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules", "dist"],
   "include": ["**/*.ts"]
 }
