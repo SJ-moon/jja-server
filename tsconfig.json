@@ -15,7 +15,6 @@
       "@app/*": ["./src/app/*"],
       "@config/*": ["./src/config/*"],
       "@constant/*": ["./src/constant/*"],
-      "@decorator/*": ["./src/decorator/*"],
       "@middleware/*": ["./src/middleware/*"],
       "@type/*": ["./src/type/*"]
     }
