@@ -1,19 +1,10 @@
-import * as bcrypt from 'bcrypt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { JwtModule } from '@nestjs/jwt';
-import { PassportModule } from '@nestjs/passport';
-import { AuthController } from '@app/auth/auth.controller';
-import { AuthService } from '@app/auth/auth.service';
-import { LocalStrategy } from '@app/auth/strategies/local.strategy';
 import { Auth } from '@app/auth/auth.entity';
-import { UserModule } from '@app/user/user.module';
 import { User } from '@app/user/user.entity';
 import { UserService } from '@app/user/user.service';
-import { jwtConstants } from '@constant/jwt.constant';
 import { TestConnectionModule } from '@config/test/test.config';
 import { AuthModule } from '@app/auth/auth.module';
 import { UserController } from '../user.controller';
-import { generalUserResponse } from '@type/user/user.resp';
 import { QueryFailedError } from 'typeorm';
 
 describe('AuthService', () => {
