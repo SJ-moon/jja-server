@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UserService } from '@app/user/user.service';
 import { User } from '@app/user/user.entity';
 import { loginResponse } from '@type/auth/auth.resp';
-import { createAuthDto } from '@type/auth/auth.dto';
+import { createAuthDto, jwtPayloadDto } from '@type/auth/auth.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Auth } from '@app/auth/auth.entity';
 import { QueryFailedError, Repository } from 'typeorm';
@@ -34,7 +34,7 @@ export class AuthService {
   }
 
   async login(user: User): Promise<loginResponse> {
-    const payload = {
+    const payload: jwtPayloadDto = {
       email: user.email,
       sub: user.id,
     };
