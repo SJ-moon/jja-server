@@ -1,8 +1,8 @@
-name: JEST
+name: Github Action CI
 
 on:
   pull_request:
-    branches: [ develop ]
+    branches: [develop]
 jobs:
   jest:
     runs-on: ubuntu-latest
