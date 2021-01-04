@@ -34,6 +34,9 @@ $ npm -g install ts-node
 # install sqlite3 (for test)
 $ sudo apt-get install sqlite3
 $ sqlite3 --version
+
+# install global ts-node
+$ npm install -g ts-node
 ```
 
 ## Running the app
