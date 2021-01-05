@@ -1,4 +1,11 @@
-import { Controller, Post, Request, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Patch,
+  Post,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiTags,
   ApiOkResponse,
@@ -19,5 +26,13 @@ export class AuthController {
   @Post('login')
   async login(@Request() req): Promise<loginResponse> {
     return this.authService.login(req.user);
+  }
+
+  @UseGuards(LocalAuthGuard)
+  @ApiOkResponse()
+  @ApiUnauthorizedResponse()
+  @Patch('pwmodify')
+  async pwModify(@Request() req): Promise<boolean> {
+    return this.authService.pwModify(req.info);
   }
 }

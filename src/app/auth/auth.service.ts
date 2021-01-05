@@ -4,10 +4,11 @@ import { JwtService } from '@nestjs/jwt';
 import { UserService } from '@app/user/user.service';
 import { User } from '@app/user/user.entity';
 import { loginResponse } from '@type/auth/auth.resp';
-import { createAuthDto, jwtPayloadDto } from '@type/auth/auth.dto';
+import { createAuthDto, jwtPayloadDto, pwModifyDto } from '@type/auth/auth.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Auth } from '@app/auth/auth.entity';
 import { QueryFailedError, Repository } from 'typeorm';
+import { use } from 'passport';
 
 @Injectable()
 export class AuthService {
@@ -59,5 +60,23 @@ export class AuthService {
       if (e instanceof QueryFailedError) return createAuthDto.user.auth;
       else throw e;
     }
+  }
+
+  async pwModify(pwModifyDto: pwModifyDto): Promise<boolean> {
+    const user = await this.validateUser(
+      pwModifyDto.email,
+      pwModifyDto.current_password,
+    );
+    if (user === null) return false;
+    const auth = user.auth;
+    const round = 10;
+    const salt = await bcrypt.genSalt(round);
+    const new_password = await bcrypt.hash(pwModifyDto.new_password, salt);
+    await this.authRepository.save({
+      ...auth,
+      password: new_password,
+      salt: salt,
+    });
+    return true;
   }
 }
