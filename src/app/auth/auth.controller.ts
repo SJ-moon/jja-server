@@ -14,6 +14,8 @@ import {
 import { AuthService } from '@app/auth/auth.service';
 import { loginResponse } from '@type/auth/auth.resp';
 import { LocalAuthGuard } from './guards/local-auth.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { pwModifyDto } from '@type/auth/auth.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -28,11 +30,11 @@ export class AuthController {
     return this.authService.login(req.user);
   }
 
-  @UseGuards(LocalAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @ApiOkResponse()
   @ApiUnauthorizedResponse()
   @Patch('pwmodify')
-  async pwModify(@Request() req): Promise<boolean> {
-    return this.authService.pwModify(req.info);
+  async pwModify(@Body() pwModifyDto: pwModifyDto): Promise<boolean> {
+    return this.authService.pwModify(pwModifyDto);
   }
 }

@@ -8,7 +8,6 @@ import { createAuthDto, jwtPayloadDto, pwModifyDto } from '@type/auth/auth.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Auth } from '@app/auth/auth.entity';
 import { QueryFailedError, Repository } from 'typeorm';
-import { use } from 'passport';
 
 @Injectable()
 export class AuthService {
