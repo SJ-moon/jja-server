@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./docker/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=nest
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8
+
+  nest:
+    build: .
+    ports:
+      - "3000:3000"
+    links:
+      - db

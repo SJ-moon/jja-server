@@ -1,8 +1,8 @@
 module.exports = {
   type: 'postgres',
-  host: 'localhost',
+  host: '0.0.0.0',
   port: 5432,
-  username: 'root',
+  username: 'postgres',
   password: 'password',
   database: 'nest',
   synchronize: false,
