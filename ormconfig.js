@@ -2,6 +2,10 @@ let databaseConfig = require(__dirname +
   '/src/config/database/database.config.js');
 const node_env = process.env.NODE_ENV;
 
+databaseConfig = process.env.DOCKER
+  ? databaseConfig.docker
+  : databaseConfig.local;
+
 if (node_env === 'development') {
   databaseConfig = {
     ...databaseConfig,
