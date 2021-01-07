@@ -16,7 +16,8 @@
       "@config/*": ["./src/config/*"],
       "@constant/*": ["./src/constant/*"],
       "@middleware/*": ["./src/middleware/*"],
-      "@type/*": ["./src/type/*"]
+      "@type/*": ["./src/type/*"],
+      "@util/*": ["./src/util/*"]
     }
   },
   "exclude": ["node_modules", "dist"],

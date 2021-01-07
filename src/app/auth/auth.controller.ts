@@ -1,7 +1,7 @@
 import {
-  Body,
   Controller,
-  Patch,
+  HttpCode,
+  HttpStatus,
   Post,
   Request,
   UseGuards,
@@ -12,10 +12,8 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { AuthService } from '@app/auth/auth.service';
+import { LocalAuthGuard } from '@app/auth/guards/local-auth.guard';
 import { loginResponse } from '@type/auth/auth.resp';
-import { LocalAuthGuard } from './guards/local-auth.guard';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { pwModifyDto } from '@type/auth/auth.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -23,18 +21,11 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @UseGuards(LocalAuthGuard)
+  @HttpCode(HttpStatus.OK)
   @ApiOkResponse()
   @ApiUnauthorizedResponse()
   @Post('login')
   async login(@Request() req): Promise<loginResponse> {
     return this.authService.login(req.user);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @ApiOkResponse()
-  @ApiUnauthorizedResponse()
-  @Patch('pwmodify')
-  async pwModify(@Body() pwModifyDto: pwModifyDto): Promise<boolean> {
-    return this.authService.pwModify(pwModifyDto);
   }
 }

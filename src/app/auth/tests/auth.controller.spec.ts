@@ -36,7 +36,7 @@ describe('AuthController', () => {
     userService = moduleFixture.get<UserService>(UserService);
 
     password = 'password';
-    const email = 'test@email.com';
+    const email = 'any@email.com';
     await userService.create({
       email: email,
       name: 'name',
@@ -49,7 +49,7 @@ describe('AuthController', () => {
   });
 
   describe('/api/v1/auth/login', () => {
-    it('login - Fail', async () => {
+    it('login - Success', async () => {
       const data = {
         email: 'any@email.com',
         password: 'password',
@@ -57,19 +57,18 @@ describe('AuthController', () => {
       return await request(app.getHttpServer())
         .post('/auth/login')
         .send(data)
-        .expect(HttpStatus.UNAUTHORIZED);
+        .expect(HttpStatus.OK);
     });
   });
 
-  describe('/api/v1/auth/pwmodify', () => {
-    it('without JWT', async () => {
+  describe('/api/v1/auth/login', () => {
+    it('login - Fail', async () => {
       const data = {
-        email: user.email,
-        current_password: password,
-        new_password: 'password',
+        email: 'no@email.com',
+        password: 'password',
       };
       return await request(app.getHttpServer())
-        .patch('/auth/pwmodify')
+        .post('/auth/login')
         .send(data)
         .expect(HttpStatus.UNAUTHORIZED);
     });

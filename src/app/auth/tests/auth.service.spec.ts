@@ -37,7 +37,7 @@ describe('AuthService', () => {
     userService = app.get<UserService>(UserService);
 
     password = 'password';
-    const email = 'test@email.com';
+    const email = 'any@email.com';
     await userService.create({
       email: email,
       name: 'name',
@@ -81,23 +81,5 @@ describe('AuthService', () => {
       password: 'password',
     });
     expect(result).toBeInstanceOf(Auth);
-  });
-
-  it('password modify - Success', async () => {
-    const result = await service.pwModify({
-      email: user.email,
-      current_password: password,
-      new_password: 'password',
-    });
-    expect(result).toEqual(true);
-  });
-
-  it('password modify - Fail (wrong current password', async () => {
-    const result = await service.pwModify({
-      email: user.email,
-      current_password: 'wrong_password',
-      new_password: 'password',
-    });
-    expect(result).toEqual(false);
   });
 });

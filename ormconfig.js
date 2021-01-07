@@ -2,7 +2,7 @@ let databaseConfig = require(__dirname +
   '/src/config/database/database.config.js');
 const node_env = process.env.NODE_ENV;
 
-if (node_env === 'development') {
+if (node_env === 'development' || node_env === undefined) {
   databaseConfig = {
     ...databaseConfig,
     migrations: ['src/migration/*.ts'],

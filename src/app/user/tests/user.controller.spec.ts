@@ -7,6 +7,20 @@ import { Auth } from '@app/auth/auth.entity';
 import { UserController } from '@app/user/user.controller';
 import { AuthModule } from '@app/auth/auth.module';
 import { TestConnectionModule } from '@config/test/test.config';
+import { mockJsonWebToken } from '@config/test/test.mock';
+
+jest.mock('jsonwebtoken', () => ({
+  verify: jest.fn((token, secretOrKey, options, callback) => {
+    callback(null, {
+      payload: {
+        email: 'any@email.com',
+        sub: 1,
+      },
+      header: 'header',
+      signature: 'signature',
+    });
+  }),
+}));
 
 describe('UserController', () => {
   let app: INestApplication;
@@ -45,6 +59,19 @@ describe('UserController', () => {
         .post('/user')
         .send(data)
         .expect(HttpStatus.BAD_REQUEST);
+    });
+
+    it('update - Success', async () => {
+      const data = {
+        email: 'other@email.com',
+        password: 'newPassword',
+        name: 'newName',
+      };
+      return await request(app.getHttpServer())
+        .patch('/user')
+        .set('Authorization', 'bearer token')
+        .send(data)
+        .expect(HttpStatus.OK);
     });
   });
 });

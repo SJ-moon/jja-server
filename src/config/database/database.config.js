@@ -5,5 +5,5 @@ module.exports = {
   username: 'root',
   password: 'password',
   database: 'nest',
-  synchronize: true,
+  synchronize: false,
 };

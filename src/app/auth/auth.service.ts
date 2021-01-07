@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UserService } from '@app/user/user.service';
 import { User } from '@app/user/user.entity';
 import { loginResponse } from '@type/auth/auth.resp';
-import { createAuthDto, jwtPayloadDto, pwModifyDto } from '@type/auth/auth.dto';
+import { createOrUpdateAuthDto, jwtPayloadDto } from '@type/auth/auth.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Auth } from '@app/auth/auth.entity';
 import { QueryFailedError, Repository } from 'typeorm';
@@ -25,7 +25,7 @@ export class AuthService {
     return result;
   }
 
-  async validateUser(email: string, password: string): Promise<any> {
+  async validateUser(email: string, password: string): Promise<User | null> {
     const user = await this.userService.findOneByEmail(email);
     if (user && (await this.bcryptCompareUser(password, user))) {
       return user;
@@ -43,10 +43,10 @@ export class AuthService {
     };
   }
 
-  async create(createAuthDto: createAuthDto): Promise<Auth> {
-    const round = 10;
-    const salt = await bcrypt.genSalt(round);
-    const password = await bcrypt.hash(createAuthDto.password, salt);
+  async create(createAuthDto: createOrUpdateAuthDto): Promise<Auth> {
+    const { password, salt } = await this.createNewPassword(
+      createAuthDto.password,
+    );
     const authDto = {
       user: createAuthDto.user,
       password,
@@ -61,21 +61,29 @@ export class AuthService {
     }
   }
 
-  async pwModify(pwModifyDto: pwModifyDto): Promise<boolean> {
-    const user = await this.validateUser(
-      pwModifyDto.email,
-      pwModifyDto.current_password,
+  async update(updateAuthDto: createOrUpdateAuthDto): Promise<boolean> {
+    const { user } = updateAuthDto;
+    const { password, salt } = await this.createNewPassword(
+      updateAuthDto.password,
     );
-    if (user === null) return false;
-    const auth = user.auth;
+    const authDto = {
+      user: user,
+      password,
+      salt,
+    };
+    const updatedAuth = await this.authRepository.update(user.auth, authDto);
+    return true;
+  }
+
+  async createNewPassword(
+    inputPassword: string,
+  ): Promise<{ password: string; salt: string }> {
     const round = 10;
     const salt = await bcrypt.genSalt(round);
-    const new_password = await bcrypt.hash(pwModifyDto.new_password, salt);
-    await this.authRepository.save({
-      ...auth,
-      password: new_password,
-      salt: salt,
-    });
-    return true;
+    const password = await bcrypt.hash(inputPassword, salt);
+    return {
+      password,
+      salt,
+    };
   }
 }

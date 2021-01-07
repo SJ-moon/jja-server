@@ -13,7 +13,7 @@ export class Auth {
   id: number;
 
   @OneToOne(() => User, (user) => user.auth, {
-    cascade: ['remove', 'update'],
+    cascade: ['remove'],
   })
   @JoinColumn({
     name: 'user_id',
