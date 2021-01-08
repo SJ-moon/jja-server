@@ -11,9 +11,13 @@ import { UserModule } from '@app/user/user.module';
 import { User } from '@app/user/user.entity';
 import { Auth } from '@app/auth/auth.entity';
 import { TestConnectionModule } from '@config/test/test.config';
+import { UserService } from '@app/user/user.service';
 
 describe('AuthController', () => {
   let app: INestApplication;
+  let userService: UserService;
+  let user: User;
+  let password: string;
 
   beforeAll(async () => {
     const moduleFixture = await Test.createTestingModule({
@@ -29,15 +33,38 @@ describe('AuthController', () => {
       controllers: [AuthController],
       providers: [AuthService, LocalStrategy],
     }).compile();
+    userService = moduleFixture.get<UserService>(UserService);
+
+    password = 'password';
+    const email = 'any@email.com';
+    await userService.create({
+      email: email,
+      name: 'name',
+      password: password,
+    });
+    user = await userService.findOneByEmail(email);
 
     app = moduleFixture.createNestApplication();
     await app.init();
   });
 
   describe('/api/v1/auth/login', () => {
-    it('login - Fail', async () => {
+    it('login - Success', async () => {
       const data = {
         email: 'any@email.com',
+        password: 'password',
+      };
+      return await request(app.getHttpServer())
+        .post('/auth/login')
+        .send(data)
+        .expect(HttpStatus.OK);
+    });
+  });
+
+  describe('/api/v1/auth/login', () => {
+    it('login - Fail', async () => {
+      const data = {
+        email: 'no@email.com',
         password: 'password',
       };
       return await request(app.getHttpServer())

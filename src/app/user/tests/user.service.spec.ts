@@ -1,15 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Auth } from '@app/auth/auth.entity';
+import { AuthModule } from '@app/auth/auth.module';
+import { AuthService } from '@app/auth/auth.service';
 import { User } from '@app/user/user.entity';
 import { UserService } from '@app/user/user.service';
+import { UserController } from '@app/user/user.controller';
 import { TestConnectionModule } from '@config/test/test.config';
-import { AuthModule } from '@app/auth/auth.module';
-import { UserController } from '../user.controller';
 import { QueryFailedError } from 'typeorm';
 
 describe('AuthService', () => {
   let app: TestingModule;
   let service: UserService;
+  let authService: AuthService;
 
   let email: string;
 
@@ -20,6 +22,7 @@ describe('AuthService', () => {
       providers: [UserService],
     }).compile();
     service = app.get<UserService>(UserService);
+    authService = app.get<AuthService>(AuthService);
     email = 'any@email.com';
   });
 
@@ -57,5 +60,20 @@ describe('AuthService', () => {
   it('findOneByEmail - Fail', async () => {
     const result = await service.findOneByEmail('other@email.com');
     expect(result).toBe(undefined);
+  });
+
+  it('update - Success', async () => {
+    const user = await service.findOneByEmail(email);
+    const updateUserDto = {
+      password: 'newPassword',
+      name: 'newName',
+    };
+    const updateResult = await service.update(user, updateUserDto);
+    expect(updateResult.name).toBe(updateUserDto.name);
+    const updatedUser = await authService.validateUser(
+      email,
+      updateUserDto.password,
+    );
+    expect(updatedUser).toBeInstanceOf(User);
   });
 });

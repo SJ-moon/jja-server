@@ -1,15 +1,14 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { User } from '@app/user/user.entity';
+import { IdOmitType } from 'src/util/id_omit_type';
+import { Auth } from '@app/auth/auth.entity';
 
+export class jwtDataDto {
+  header: any;
+  payload: jwtPayloadDto;
+  signature: any;
+}
 export class jwtPayloadDto {
-  sub: number;
   email: string;
+  sub: number;
 }
 
-export class createAuthDto {
-  @ApiProperty()
-  password: string;
-
-  @ApiProperty()
-  user: User;
-}
+export class createOrUpdateAuthDto extends IdOmitType(Auth, ['salt']) {}

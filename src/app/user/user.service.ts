@@ -2,7 +2,7 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '@app/user/user.entity';
-import { createUserDto } from '@type/user/user.dto';
+import { createUserDto, updateUserDto } from '@type/user/user.dto';
 import { AuthService } from '@app/auth/auth.service';
 import { generalUserResponse } from '@type/user/user.resp';
 
@@ -36,5 +36,23 @@ export class UserService {
     };
     await this.authService.create(createAuthDto);
     return user;
+  }
+
+  async update(
+    user: User,
+    updateUserDto: updateUserDto,
+  ): Promise<generalUserResponse> {
+    const { password, ...userDto } = updateUserDto;
+    if ((await this.authService.validateUser(user.email, password)) === null) {
+      // update auth
+      await this.authService.update({
+        user,
+        password,
+      });
+      // update user
+      delete user.auth;
+      await this.userRepository.update(user, userDto);
+    }
+    return await this.userRepository.findOne(user.id);
   }
 }
