@@ -1,4 +1,11 @@
-import { Controller, Post, Request, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Patch,
+  Post,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiTags,
   ApiOkResponse,
@@ -7,6 +14,8 @@ import {
 import { AuthService } from '@app/auth/auth.service';
 import { loginResponse } from '@type/auth/auth.resp';
 import { LocalAuthGuard } from './guards/local-auth.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { pwModifyDto } from '@type/auth/auth.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -19,5 +28,13 @@ export class AuthController {
   @Post('login')
   async login(@Request() req): Promise<loginResponse> {
     return this.authService.login(req.user);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @ApiOkResponse()
+  @ApiUnauthorizedResponse()
+  @Patch('pwmodify')
+  async pwModify(@Body() pwModifyDto: pwModifyDto): Promise<boolean> {
+    return this.authService.pwModify(pwModifyDto);
   }
 }

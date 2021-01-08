@@ -23,6 +23,10 @@ describe('AuthService', () => {
     email = 'any@email.com';
   });
 
+  it('findAll - Fail', async () => {
+    const allList = await service.findAll();
+    expect(allList).toStrictEqual([]);
+  });
   it('create - Success', async () => {
     const result = await service.create({
       email: email,
@@ -57,5 +61,74 @@ describe('AuthService', () => {
   it('findOneByEmail - Fail', async () => {
     const result = await service.findOneByEmail('other@email.com');
     expect(result).toBe(undefined);
+  });
+
+  it('findAll - Success', async () => {
+    const account1 = await service.create({
+      email: 'abc@gmail.com',
+      name: 'test1',
+      password: 'password1',
+    });
+    const account2 = await service.create({
+      email: 'efg@gmail.com',
+      name: 'test2',
+      password: 'password2',
+    });
+
+    const userList = await service.findAll();
+    expect(userList).toBeInstanceOf(Array);
+    expect(userList).toMatchObject([
+      {
+        id: 1,
+        email: email,
+        name: 'name',
+      },
+      {
+        id: 2,
+        email: 'abc@gmail.com',
+        name: 'test1',
+      },
+      {
+        id: 3,
+        email: 'efg@gmail.com',
+        name: 'test2',
+      },
+    ]);
+  });
+
+  it('findOne - Success', async () => {
+    const findUser = await service.findOne('abc@gmail.com');
+    expect(findUser).toBeInstanceOf(User);
+    expect(findUser).toMatchObject({
+      id: 2,
+      email: 'abc@gmail.com',
+      name: 'test1',
+    });
+  });
+
+  it('findOne - Fail', async () => {
+    try {
+      await service.findOne('bbb@gmail.com');
+    } catch (e) {
+      expect(e).toBe(undefined);
+    }
+  });
+
+  it('Delete - Success', async () => {
+    const deleteUser = await service.deleteUser('abc@gmail.com');
+    expect(deleteUser).toBeInstanceOf(User);
+    expect(deleteUser).toMatchObject({
+      id: 2,
+      email: 'abc@gmail.com',
+      name: 'test1',
+    });
+  });
+
+  it('Delete  - Fail', async () => {
+    try {
+      await service.deleteUser('fff@gmail.com');
+    } catch (e) {
+      expect(e).toBe(undefined);
+    }
   });
 });

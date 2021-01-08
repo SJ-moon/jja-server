@@ -46,5 +46,35 @@ describe('UserController', () => {
         .send(data)
         .expect(HttpStatus.BAD_REQUEST);
     });
+
+    it('findAll - Success', async () => {
+      return await request(app.getHttpServer())
+        .get('/user/list')
+        .expect(HttpStatus.OK);
+    });
+
+    it('findOne - Success', async () => {
+      return await request(app.getHttpServer())
+        .get('/user/any@email.com')
+        .expect(HttpStatus.OK);
+    });
+
+    it('findOne - Fail', async () => {
+      return await request(app.getHttpServer())
+        .get('/user/error@email.com')
+        .expect(HttpStatus.BAD_REQUEST);
+    });
+
+    it('Delete - Success', async () => {
+      return await request(app.getHttpServer())
+        .delete('/user/any@email.com')
+        .expect(HttpStatus.OK);
+    });
+
+    it('Delete - Fail', async () => {
+      return await request(app.getHttpServer())
+        .delete('/user/error@email.com')
+        .expect(HttpStatus.BAD_REQUEST);
+    });
   });
 });

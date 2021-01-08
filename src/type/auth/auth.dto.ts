@@ -13,3 +13,9 @@ export class createAuthDto {
   @ApiProperty()
   user: User;
 }
+
+export class pwModifyDto {
+  email: string;
+  current_password: string;
+  new_password: string;
+}

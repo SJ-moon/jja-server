@@ -12,6 +12,6 @@ export class User {
   @Column()
   name: string;
 
-  @OneToOne(() => Auth, (auth) => auth.user)
+  @OneToOne(() => Auth, (auth) => auth.user, { onDelete: 'CASCADE' })
   auth: Auth;
 }

@@ -37,4 +37,20 @@ export class UserService {
     await this.authService.create(createAuthDto);
     return user;
   }
+
+  async findAll(): Promise<User[]> {
+    return await this.userRepository.find();
+  }
+
+  async findOne(userEmail: string): Promise<User> {
+    let my_result = await this.userRepository.findOne({ email: userEmail });
+    return await this.userRepository.findOne({ email: userEmail });
+  }
+
+  async deleteUser(userEmail: string): Promise<User> {
+    let user = await this.userRepository.findOne({ email: userEmail });
+    await this.authService.delete(user);
+    await this.userRepository.delete({ email: userEmail });
+    return user;
+  }
 }
