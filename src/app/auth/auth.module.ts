@@ -8,12 +8,14 @@ import { User } from '@app/user/user.entity';
 import { LocalStrategy } from '@app/auth/strategies/local.strategy';
 import { UserModule } from '@app/user/user.module';
 import { Auth } from '@app/auth/auth.entity';
+import { OAuthModule } from '@app/auth/oauth/oauth.module';
 import { jwtConstants } from '@constant/jwt.constant';
 import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   imports: [
     forwardRef(() => UserModule),
+    forwardRef(() => OAuthModule),
     PassportModule,
     JwtModule.register({
       secret: jwtConstants.secret,

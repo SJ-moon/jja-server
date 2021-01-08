@@ -1,13 +1,13 @@
 import * as bcrypt from 'bcrypt';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import { UserService } from '@app/user/user.service';
-import { User } from '@app/user/user.entity';
+import { User, UserWithoutAuth } from '@app/user/user.entity';
+import { Auth } from '@app/auth/auth.entity';
 import { loginResponse } from '@type/auth/auth.resp';
 import { createOrUpdateAuthDto, jwtPayloadDto } from '@type/auth/auth.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Auth } from '@app/auth/auth.entity';
-import { QueryFailedError, Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
@@ -33,7 +33,7 @@ export class AuthService {
     return null;
   }
 
-  async login(user: User): Promise<loginResponse> {
+  async login(user: UserWithoutAuth): Promise<loginResponse> {
     const payload: jwtPayloadDto = {
       email: user.email,
       sub: user.id,
@@ -51,6 +51,7 @@ export class AuthService {
       user: createAuthDto.user,
       password,
       salt,
+      provider: createAuthDto.provider || 'local',
     };
     const auth = await this.authRepository.create(authDto);
     try {

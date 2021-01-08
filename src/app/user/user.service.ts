@@ -1,10 +1,10 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '@app/user/user.entity';
-import { createUserDto, updateUserDto } from '@type/user/user.dto';
+import { User, UserWithoutAuth } from '@app/user/user.entity';
 import { AuthService } from '@app/auth/auth.service';
-import { generalUserResponse } from '@type/user/user.resp';
+import { createUserDto, updateUserDto } from '@type/user/user.dto';
+import { createOrUpdateAuthDto } from '@type/auth/auth.dto';
 
 @Injectable()
 export class UserService {
@@ -26,13 +26,14 @@ export class UserService {
     });
   }
 
-  async create(createUserDto: createUserDto): Promise<generalUserResponse> {
-    const { password, ...userDto } = createUserDto;
+  async create(createUserDto: createUserDto): Promise<UserWithoutAuth> {
+    const { password, provider, ...userDto } = createUserDto;
     let user = await this.userRepository.create(userDto);
     user = await this.userRepository.save(user);
-    const createAuthDto = {
+    const createAuthDto: createOrUpdateAuthDto = {
       password,
       user: user,
+      provider: provider,
     };
     await this.authService.create(createAuthDto);
     return user;
@@ -41,7 +42,7 @@ export class UserService {
   async update(
     user: User,
     updateUserDto: updateUserDto,
-  ): Promise<generalUserResponse> {
+  ): Promise<UserWithoutAuth> {
     const { password, ...userDto } = updateUserDto;
     if ((await this.authService.validateUser(user.email, password)) === null) {
       // update auth

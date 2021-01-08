@@ -6,6 +6,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { User } from '@app/user/user.entity';
+import { SocialProviderValues } from './oauth/oauth.enum';
 
 @Entity()
 export class Auth {
@@ -25,4 +26,7 @@ export class Auth {
 
   @Column()
   salt: string;
+
+  @Column({ default: 'local' })
+  provider?: SocialProviderValues | 'local';
 }
